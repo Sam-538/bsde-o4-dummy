@@ -274,7 +274,7 @@ export function assertStatistics(employees, dtoOut) {
 	assert(YEARS_ROUNDED ? +(maxAge.toFixed(0)) === dtoOut.maxAge : truncAgeEquals(maxAge, dtoOut.maxAge), 'Testing statistics - maxAge '+dtoOut.maxAge+' should be '+(YEARS_ROUNDED ? +(maxAge.toFixed(0)) : (maxAge | 0)));
 
 	let medianAge = median(ages);
-	assert(YEARS_ROUNDED ? +(medianAge.toFixed(0)) === dtoOut.medianAge : truncAgeEquals(medianAge, dtoOut.medianAge), 'Testing statistics - medianAge '+dtoOut.medianAge+' should be '+medianAge);
+	assert(YEARS_ROUNDED ? +(medianAge.toFixed(0)) === dtoOut.medianAge : truncAgeEquals(medianAge, dtoOut.medianAge), 'Testing statistics - medianAge '+dtoOut.medianAge+' should be '+YEARS_ROUNDED ? +(medianAge.toFixed(0)) : (medianAge | 0));
 	
 	//yes, this calculation is totaly meaningless as median function could have been used instead. But it´s efficient.
 	let medianWorkload = 0, sumWorkload = 0, middleIndex = ((employees.length / 2) | 0);

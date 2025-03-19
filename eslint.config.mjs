@@ -48,6 +48,9 @@ export default [
       "valid-typeof": "warn",
       "no-console": "off",
 	  "complexity": ["error", 20],
+	  "complexity": ["warn", 12],
+	  "max-lines-per-function": ["warn", 50],
+	  "max-depth": ["error", 4],
 	  "jsdoc/require-description": "error",
       "jsdoc/check-values": "error",
 	  
