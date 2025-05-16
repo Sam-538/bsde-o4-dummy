@@ -88,6 +88,7 @@ function getEmployeeStatistics(employees) {
   // ✅ Rounded to 1 decimal place for test compatibility
   const averageAge = Math.round((ages.reduce((a, b) => a + b, 0) / ages.length) * 10) / 10;
 
+
   const minAge = Math.round(Math.min(...ages));
   const maxAge = Math.round(Math.max(...ages));
   const medianAge = Math.round(median(ages));
