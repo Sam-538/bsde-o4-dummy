@@ -18,9 +18,15 @@ function generateEmployeeData(dtoIn) {
 
   function randomDate(minAge, maxAge) {
   const today = new Date();
-  const minDate = new Date(today.getFullYear() - maxAge, today.getMonth(), today.getDate());
-  const maxDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
-  return new Date(minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime()));
+
+  const maxDate = new Date(today);
+  maxDate.setFullYear(today.getFullYear() - minAge);
+
+  const minDate = new Date(today);
+  minDate.setFullYear(today.getFullYear() - maxAge);
+
+  const randomTime = minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime());
+  return new Date(randomTime);
 }
 
   const workloads = [10, 20, 30, 40];
@@ -46,11 +52,18 @@ function generateEmployeeData(dtoIn) {
  * @returns {object} summary statistics
  */
 function getEmployeeStatistics(employees) {
-  function getAge(birthdate) {
-    const birth = new Date(birthdate);
-    const today = new Date();
-    return (today - birth) / (1000 * 60 * 60 * 24 * 365.25);
+  function getAge(birthdateStr) {
+  const birth = new Date(birthdateStr);
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  if (
+    today.getMonth() < birth.getMonth() ||
+    (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())
+  ) {
+    age--;
   }
+  return age;
+}
 
   function median(numbers) {
     const sorted = [...numbers].sort((a, b) => a - b);
