@@ -18,10 +18,13 @@ function generateEmployeeData(dtoIn) {
 
   function randomDate(minAge, maxAge) {
     const today = new Date();
+
     const maxDate = new Date(today);
     maxDate.setFullYear(today.getFullYear() - minAge);
+
     const minDate = new Date(today);
     minDate.setFullYear(today.getFullYear() - maxAge);
+
     const randomTime = minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime());
     return new Date(randomTime);
   }
@@ -82,7 +85,9 @@ function getEmployeeStatistics(employees) {
     if (e.gender === "female") womenWorkloads.push(e.workload);
   }
 
-  const averageAge = ages.reduce((a, b) => a + b, 0) / ages.length;
+  // ✅ Rounded to 1 decimal place for test compatibility
+  const averageAge = Math.round((ages.reduce((a, b) => a + b, 0) / ages.length) * 10) / 10;
+
   const minAge = Math.round(Math.min(...ages));
   const maxAge = Math.round(Math.max(...ages));
   const medianAge = Math.round(median(ages));
