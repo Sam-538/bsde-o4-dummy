@@ -115,3 +115,9 @@ function getEmployeeStatistics(employees) {
     sortedByWorkload
   };
 }
+
+export {
+  main,
+  generateEmployeeData,
+  getEmployeeStatistics
+};
