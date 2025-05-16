@@ -51,7 +51,7 @@ export function main(dtoIn) {
 /**
  * Spočítá statistiky pro seznam zaměstnanců.
  * @param {Array} employees
- * @returns {Object} statistiky: averageAge, medianWorkload, genderRatio
+ * @returns {Object} statistiky: averageAge, medianWorkload, genderRatio, workloadX, sortedByWorkload
  */
 export function getEmployeeStatistics(employees) {
     const now = new Date();
@@ -66,36 +66,38 @@ export function getEmployeeStatistics(employees) {
         return age;
     });
 
+    const averageAge = parseFloat((ages.reduce((a, b) => a + b, 0) / employees.length).toFixed(1));
+
     const workloads = employees.map(e => e.workload).sort((a, b) => a - b);
+    const mid = Math.floor(workloads.length / 2);
+    const medianWorkload = Math.round(
+        workloads.length % 2 === 0
+            ? (workloads[mid - 1] + workloads[mid]) / 2
+            : workloads[mid]
+    );
 
     const maleCount = employees.filter(e => e.gender === "male").length;
     const femaleCount = employees.length - maleCount;
+    const genderRatio = femaleCount === 0 ? maleCount : parseFloat((maleCount / femaleCount).toFixed(1));
 
-    const averageAge = ages.reduce((a, b) => a + b, 0) / employees.length;
+    const workload10 = employees.filter(e => e.workload === 10).length;
+    const workload20 = employees.filter(e => e.workload === 20).length;
+    const workload30 = employees.filter(e => e.workload === 30).length;
+    const workload40 = employees.filter(e => e.workload === 40).length;
 
-    let medianWorkload;
-    const mid = Math.floor(workloads.length / 2);
-    if (workloads.length % 2 === 0) {
-        medianWorkload = (workloads[mid - 1] + workloads[mid]) / 2;
-    } else {
-        medianWorkload = workloads[mid];
-    }
-
-    medianWorkload = Math.round(medianWorkload);
-
-    let genderRatio;
-    if (femaleCount === 0) {
-        genderRatio = maleCount;
-    } else {
-        genderRatio = parseFloat((maleCount / femaleCount).toFixed(1));
-    }
+    const sortedByWorkload = [...employees].sort((a, b) => a.workload - b.workload);
 
     return {
-        averageAge: parseFloat(averageAge.toFixed(1)),
+        averageAge,
         medianWorkload,
-        genderRatio
+        genderRatio,
+        workload10,
+        workload20,
+        workload30,
+        workload40,
+        sortedByWorkload
     };
 }
 
-// ✅ Export alias to match autograder expectations
+// Export alias for test compatibility
 export const generateEmployeeData = main;
