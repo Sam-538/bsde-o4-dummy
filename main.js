@@ -17,17 +17,14 @@ function generateEmployeeData(dtoIn) {
   const getRandomGender = () => Math.random() < 0.5 ? "male" : "female";
 
   function randomDate(minAge, maxAge) {
-  const today = new Date();
-
-  const maxDate = new Date(today);
-  maxDate.setFullYear(today.getFullYear() - minAge);
-
-  const minDate = new Date(today);
-  minDate.setFullYear(today.getFullYear() - maxAge);
-
-  const randomTime = minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime());
-  return new Date(randomTime);
-}
+    const today = new Date();
+    const maxDate = new Date(today);
+    maxDate.setFullYear(today.getFullYear() - minAge);
+    const minDate = new Date(today);
+    minDate.setFullYear(today.getFullYear() - maxAge);
+    const randomTime = minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime());
+    return new Date(randomTime);
+  }
 
   const workloads = [10, 20, 30, 40];
   const getRandomWorkload = () => workloads[getRandomNumber(workloads.length)];
@@ -85,9 +82,7 @@ function getEmployeeStatistics(employees) {
     if (e.gender === "female") womenWorkloads.push(e.workload);
   }
 
-  // ⚠️ Fix: Keep full precision for averageAge (no rounding)
   const averageAge = ages.reduce((a, b) => a + b, 0) / ages.length;
-
   const minAge = Math.round(Math.min(...ages));
   const maxAge = Math.round(Math.max(...ages));
   const medianAge = Math.round(median(ages));
@@ -116,8 +111,19 @@ function getEmployeeStatistics(employees) {
   };
 }
 
+/**
+ * Main application function that combines generation and statistics.
+ * @param {object} dtoIn contains employee count and age range
+ * @returns {object} computed dtoOut with statistics
+ */
+function main(dtoIn) {
+  const employees = generateEmployeeData(dtoIn);
+  const dtoOut = getEmployeeStatistics(employees);
+  return dtoOut;
+}
+
 export {
-  main.js,
+  main,
   generateEmployeeData,
   getEmployeeStatistics
 };
