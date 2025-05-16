@@ -106,8 +106,14 @@ function getEmployeeStatistics(employees) {
  * @param {object} dtoIn contains employee count and age range
  * @returns {object} computed dtoOut with statistics
  */
-export function main(dtoIn) {
+function main(dtoIn) {
   const employees = generateEmployeeData(dtoIn);
   const dtoOut = getEmployeeStatistics(employees);
   return dtoOut;
 }
+
+export {
+  main,
+  generateEmployeeData,
+  getEmployeeStatistics
+};
