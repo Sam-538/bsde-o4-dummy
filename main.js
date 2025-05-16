@@ -53,17 +53,17 @@ function generateEmployeeData(dtoIn) {
  */
 function getEmployeeStatistics(employees) {
   function getAge(birthdateStr) {
-  const birth = new Date(birthdateStr);
-  const today = new Date();
-  let age = today.getFullYear() - birth.getFullYear();
-  if (
-    today.getMonth() < birth.getMonth() ||
-    (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())
-  ) {
-    age--;
+    const birth = new Date(birthdateStr);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    if (
+      today.getMonth() < birth.getMonth() ||
+      (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())
+    ) {
+      age--;
+    }
+    return age;
   }
-  return age;
-}
 
   function median(numbers) {
     const sorted = [...numbers].sort((a, b) => a - b);
@@ -85,7 +85,9 @@ function getEmployeeStatistics(employees) {
     if (e.gender === "female") womenWorkloads.push(e.workload);
   }
 
-  const averageAge = Math.round((ages.reduce((a, b) => a + b, 0) / ages.length) * 10) / 10;
+  // ⚠️ Fix: Keep full precision for averageAge (no rounding)
+  const averageAge = ages.reduce((a, b) => a + b, 0) / ages.length;
+
   const minAge = Math.round(Math.min(...ages));
   const maxAge = Math.round(Math.max(...ages));
   const medianAge = Math.round(median(ages));
@@ -113,20 +115,3 @@ function getEmployeeStatistics(employees) {
     sortedByWorkload
   };
 }
-
-/**
- * Main application function that combines generation and statistics.
- * @param {object} dtoIn contains employee count and age range
- * @returns {object} computed dtoOut with statistics
- */
-function main(dtoIn) {
-  const employees = generateEmployeeData(dtoIn);
-  const dtoOut = getEmployeeStatistics(employees);
-  return dtoOut;
-}
-
-export {
-  main,
-  generateEmployeeData,
-  getEmployeeStatistics
-};
