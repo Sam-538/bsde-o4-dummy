@@ -1,35 +1,13 @@
-//TODO add imports if needed
-//TODO doc
+import { generateEmployeeData } from "./src/generateEmployeeData.js";
+import { getEmployeeStatistics } from "./src/getEmployeeStatistics.js";
+
 /**
- * The main function which calls the application. 
- * Please, add specific description here for the application purpose.
- * @param {object} dtoIn contains count of employees, age limit of employees {min, max}
- * @returns {object} containing the statistics
+ * Main function that ties together generation and statistics.
+ * @param {object} dtoIn { count, age: { min, max } }
+ * @returns {object} dtoOut with all calculated statistics
  */
 export function main(dtoIn) {
-  //TODO code
-  //let dtoOut = exMain(dtoIn);
-  return dtoOut;
-}
-
-/**
- * Please, add specific description here 
- * @param {object} dtoIn contains count of employees, age limit of employees {min, max}
- * @returns {Array} of employees
- */
-export function generateEmployeeData(dtoIn) {
-  //TODO code
-  //let dtoOut = exGenerateEmployeeData(dtoIn);
-  return dtoOut;
-}
-
-/**
- * Please, add specific description here 
- * @param {Array} employees containing all the mocked employee data
- * @returns {object} statistics of the employees
- */
-export function getEmployeeStatistics(employees) {
-  //TODO code
-  //let dtoOut = exGetEmployeeStatistics(employees);
+  const employees = generateEmployeeData(dtoIn);
+  const dtoOut = getEmployeeStatistics(employees);
   return dtoOut;
 }
