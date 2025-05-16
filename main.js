@@ -1,99 +1,98 @@
-/**
- * Generates a list of employees based on input constraints.
- * @param {object} dtoIn
- * @returns {Array} list of employees
- */
+// main.js
+
+export function main(dtoIn) {
+  const employees = generateEmployeeData(dtoIn);
+  const dtoOut = getEmployeeStatistics(employees);
+  return dtoOut;
+}
+
 function generateEmployeeData(dtoIn) {
   const { count, age } = dtoIn;
   const employees = [];
 
   const firstNames = ["Kai", "Eliana", "Jaden", "Ezra", "Luca", "Rowan", "Nova", "Amara", "Aaliyah", "Finn", "John", "Patrick", "Laura", "Teresa", "Aaron", "Ivan", "Janus", "Orpheus", "Penelope", "Clementine", "Kim", "Andrew", "Patricia", "Urum", "Ryan", "Hugh", "Bob", "Thomas", "Charlie"];
   const lastNames = ["Sýkora", "Novák", "Svoboda", "Kučera", "Dvořák", "Černý", "Bennett", "Růžička", "Pavlík", "Tichý", "Musil", "Pokorný", "Zeman", "Klein", "Eliáš", "Bílek", "Havel", "Kaplan", "Heřman", "Jakubec", "Fiala", "Švec", "Průša", "Benda", "Moravec", "Březina", "Turek", "Baláž", "Musil"];
-
-  function getRandomNumber(max) {
-    return Math.floor(Math.random() * max);
-  }
-
-  const getRandomGender = () => Math.random() < 0.5 ? "male" : "female";
-
-  function randomDate(minAge, maxAge) {
-    const today = new Date();
-    const maxDate = new Date(today);
-    maxDate.setFullYear(today.getFullYear() - minAge);
-    const minDate = new Date(today);
-    minDate.setFullYear(today.getFullYear() - maxAge);
-    const randomTime = minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime());
-    return new Date(randomTime);
-  }
-
   const workloads = [10, 20, 30, 40];
-  const getRandomWorkload = () => workloads[getRandomNumber(workloads.length)];
 
   for (let i = 0; i < count; i++) {
-    const employee = {
-      gender: getRandomGender(),
-      birthdate: randomDate(age.min, age.max).toISOString(),
-      name: firstNames[getRandomNumber(firstNames.length)],
-      surname: lastNames[getRandomNumber(lastNames.length)],
-      workload: getRandomWorkload()
-    };
-    employees.push(employee);
+    const gender = Math.random() < 0.5 ? "male" : "female";
+    const birthdate = randomDate(age.min, age.max).toISOString();
+    const name = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const surname = lastNames[Math.floor(Math.random() * lastNames.length)];
+    const workload = workloads[Math.floor(Math.random() * workloads.length)];
+
+    employees.push({ gender, birthdate, name, surname, workload });
   }
 
   return employees;
 }
 
-/**
- * Computes various statistics based on the list of employees.
- * @param {Array} employees
- * @returns {object} summary statistics
- */
+function randomDate(minAge, maxAge) {
+  const today = new Date();
+  const minDate = new Date(today.getFullYear() - maxAge, today.getMonth(), today.getDate());
+  const maxDate = new Date(today.getFullYear() - minAge - 1, today.getMonth(), today.getDate());
+  return new Date(minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime()));
+}
+
 function getEmployeeStatistics(employees) {
-  const now = new Date();
+  const today = new Date();
   const ages = employees.map(emp => {
-    const birthDate = new Date(emp.birthdate);
-    const age = now.getFullYear() - birthDate.getFullYear();
-    const monthDiff = now.getMonth() - birthDate.getMonth();
-    const dayDiff = now.getDate() - birthDate.getDate();
-    return monthDiff < 0 || (monthDiff === 0 && dayDiff < 0) ? age - 1 : age;
+    const birth = new Date(emp.birthdate);
+    return (today - birth) / (1000 * 60 * 60 * 24 * 365.25);
   });
 
-  const workloads = employees.map(emp => emp.workload);
+  const workloads = employees.map(e => e.workload);
 
-  const averageAge = Math.round(ages.reduce((a, b) => a + b, 0) / ages.length);
-  const averageWorkload = +(workloads.reduce((a, b) => a + b, 0) / workloads.length).toFixed(2);
+  // Count workloads
+  const workload10 = workloads.filter(w => w === 10).length;
+  const workload20 = workloads.filter(w => w === 20).length;
+  const workload30 = workloads.filter(w => w === 30).length;
+  const workload40 = workloads.filter(w => w === 40).length;
 
-  const sortedWorkloads = workloads.slice().sort((a, b) => a - b);
-  const mid = Math.floor(sortedWorkloads.length / 2);
-  const medianWorkload = sortedWorkloads.length % 2 === 0
-    ? (sortedWorkloads[mid - 1] + sortedWorkloads[mid]) / 2
-    : sortedWorkloads[mid];
+  // Average age
+  const averageAge = +(ages.reduce((a, b) => a + b, 0) / ages.length).toFixed(1);
 
-  const minWorkload = Math.min(...workloads);
-  const maxWorkload = Math.max(...workloads);
+  // Min and Max age
+  const minAge = Math.round(Math.min(...ages));
+  const maxAge = Math.round(Math.max(...ages));
+
+  // Median age
+  const medianAge = Math.round(median(ages));
+
+  // Median workload
+  const medianWorkload = Math.round(median(workloads));
+
+  // Average workload for females
+  const femaleWorkloads = employees
+    .filter(e => e.gender === "female")
+    .map(e => e.workload);
+  const averageWomenWorkload = femaleWorkloads.length > 0
+    ? +(femaleWorkloads.reduce((a, b) => a + b, 0) / femaleWorkloads.length).toFixed(1)
+    : 0;
+
+  // Sort by workload
+  const sortedByWorkload = [...employees].sort((a, b) => a.workload - b.workload);
 
   return {
+    total: employees.length,
+    workload10,
+    workload20,
+    workload30,
+    workload40,
     averageAge,
-    averageWorkload,
+    minAge,
+    maxAge,
+    medianAge,
     medianWorkload,
-    minWorkload,
-    maxWorkload,
+    averageWomenWorkload,
+    sortedByWorkload,
   };
 }
 
-/**
- * Main application function that combines generation and statistics.
- * @param {object} dtoIn contains employee count and age range
- * @returns {object} computed dtoOut with statistics
- */
-function main(dtoIn) {
-  const employees = generateEmployeeData(dtoIn);
-  const dtoOut = getEmployeeStatistics(employees);
-  return dtoOut;
+function median(values) {
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0
+    ? (sorted[mid - 1] + sorted[mid]) / 2
+    : sorted[mid];
 }
-
-export {
-  main,
-  generateEmployeeData,
-  getEmployeeStatistics
-};
