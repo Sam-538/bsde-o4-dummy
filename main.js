@@ -17,11 +17,11 @@ function generateEmployeeData(dtoIn) {
   const getRandomGender = () => Math.random() < 0.5 ? "male" : "female";
 
   function randomDate(minAge, maxAge) {
-    const today = new Date();
-    const minDate = new Date(today.getFullYear() - maxAge, today.getMonth(), today.getDate());
-    const maxDate = new Date(today.getFullYear() - minAge - 1, today.getMonth(), today.getDate());
-    return new Date(minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime()));
-  }
+  const today = new Date();
+  const minDate = new Date(today.getFullYear() - maxAge, today.getMonth(), today.getDate());
+  const maxDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
+  return new Date(minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime()));
+}
 
   const workloads = [10, 20, 30, 40];
   const getRandomWorkload = () => workloads[getRandomNumber(workloads.length)];
