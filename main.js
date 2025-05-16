@@ -85,9 +85,8 @@ function getEmployeeStatistics(employees) {
     if (e.gender === "female") womenWorkloads.push(e.workload);
   }
 
-  // ✅ Rounded to 1 decimal place for test compatibility
-  const averageAge = Math.round((ages.reduce((a, b) => a + b, 0) / ages.length) * 10) / 10;
-
+  // ✅ More precise test-passing rounding
+  const averageAge = Number((ages.reduce((a, b) => a + b, 0) / ages.length).toFixed(1));
 
   const minAge = Math.round(Math.min(...ages));
   const maxAge = Math.round(Math.max(...ages));
@@ -96,7 +95,7 @@ function getEmployeeStatistics(employees) {
 
   const averageWomenWorkload =
     womenWorkloads.length > 0
-      ? Math.round((womenWorkloads.reduce((a, b) => a + b, 0) / womenWorkloads.length) * 10) / 10
+      ? Number((womenWorkloads.reduce((a, b) => a + b, 0) / womenWorkloads.length).toFixed(1))
       : 0;
 
   const sortedByWorkload = [...employees].sort((a, b) => a.workload - b.workload);
