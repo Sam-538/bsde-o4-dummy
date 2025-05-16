@@ -25,7 +25,7 @@ export function main(dtoIn) {
     function randomDate(minAge, maxAge) {
         const today = new Date();
         const minDate = new Date(today.getFullYear() - maxAge, today.getMonth(), today.getDate());
-        const maxDate = new Date(today.getFullYear() - minAge - 1, today.getMonth(), today.getDate());
+        const maxDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
         return new Date(minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime()));
     }
 
@@ -56,6 +56,7 @@ export function main(dtoIn) {
 export function getEmployeeStatistics(employees) {
     const now = new Date();
 
+    // Výpočet věků
     const ages = employees.map(e => {
         const birthDate = new Date(e.birthdate);
         let age = now.getFullYear() - birthDate.getFullYear();
@@ -68,23 +69,25 @@ export function getEmployeeStatistics(employees) {
 
     const averageAge = parseFloat((ages.reduce((a, b) => a + b, 0) / employees.length).toFixed(1));
 
+    // Výpočet mediánu pracovní doby
     const workloads = employees.map(e => e.workload).sort((a, b) => a - b);
     const mid = Math.floor(workloads.length / 2);
-    const medianWorkload = Math.round(
-        workloads.length % 2 === 0
-            ? (workloads[mid - 1] + workloads[mid]) / 2
-            : workloads[mid]
-    );
+    const medianWorkload = workloads.length % 2 === 0
+        ? Math.round((workloads[mid - 1] + workloads[mid]) / 2)
+        : workloads[mid];
 
+    // Poměr pohlaví
     const maleCount = employees.filter(e => e.gender === "male").length;
     const femaleCount = employees.length - maleCount;
     const genderRatio = femaleCount === 0 ? maleCount : parseFloat((maleCount / femaleCount).toFixed(1));
 
+    // Počet zaměstnanců podle pracovní doby
     const workload10 = employees.filter(e => e.workload === 10).length;
     const workload20 = employees.filter(e => e.workload === 20).length;
     const workload30 = employees.filter(e => e.workload === 30).length;
     const workload40 = employees.filter(e => e.workload === 40).length;
 
+    // Seřazení podle pracovní doby
     const sortedByWorkload = [...employees].sort((a, b) => a.workload - b.workload);
 
     return {
