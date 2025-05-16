@@ -1,76 +1,77 @@
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function getRandomDate(minAge, maxAge) {
-  const currentYear = new Date().getFullYear();
-  const minBirthYear = currentYear - maxAge;
-  const maxBirthYear = currentYear - minAge;
-  const year = getRandomInt(minBirthYear, maxBirthYear);
-  const month = getRandomInt(0, 11);
-  const day = getRandomInt(1, 28);
-  return new Date(year, month, day).toISOString().split("T")[0];
-}
-
-function generateEmployeeData(minAge, maxAge, firstNames, lastNames) {
-  const genders = ["male", "female"];
-  return {
-    name: `${firstNames[getRandomInt(0, firstNames.length - 1)]} ${lastNames[getRandomInt(0, lastNames.length - 1)]}`,
-    gender: genders[getRandomInt(0, 1)],
-    birthdate: getRandomDate(minAge, maxAge),
-    workload: getRandomInt(10, 100)
-  };
-}
-
-function main(dtoIn) {
-  const count = dtoIn.count;
-  const minAge = dtoIn.minAge;
-  const maxAge = dtoIn.maxAge;
-
-  const firstNames = ["John", "Jane", "Alex", "Chris", "Sam"];
-  const lastNames = ["Smith", "Doe", "Johnson", "Lee", "Brown"];
+/**
+ * Generates a list of employees based on input criteria.
+ * @param {object} dtoIn - Contains count and age {min, max}
+ * @returns {Array} - List of generated employees
+ */
+export function generateEmployeeData(count, minAge, maxAge, firstNames, lastNames) {
   const employees = [];
 
+  function getRandomNumber(max) {
+    return Math.floor(Math.random() * max);
+  }
+
+  const getRandomGender = () => (Math.random() < 0.5 ? "male" : "female");
+
+  function randomDate(minAge, maxAge) {
+    const today = new Date();
+    const minDate = new Date(today.getFullYear() - maxAge, today.getMonth(), today.getDate());
+    const maxDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
+    return new Date(minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime()));
+  }
+
+  const workloads = [10, 20, 30, 40];
+  const getRandomWorkload = () => workloads[getRandomNumber(workloads.length)];
+
   for (let i = 0; i < count; i++) {
-    employees.push(generateEmployeeData(minAge, maxAge, firstNames, lastNames));
+    employees.push({
+      gender: getRandomGender(),
+      birthdate: randomDate(minAge, maxAge).toISOString(),
+      name: firstNames[getRandomNumber(firstNames.length)],
+      surname: lastNames[getRandomNumber(lastNames.length)],
+      workload: getRandomWorkload(),
+    });
   }
 
   return employees;
 }
 
-function getEmployeeStatistics(employees) {
-  const ages = [];
-  const workloads = [];
-  const maleWorkloads = [];
-  const femaleWorkloads = [];
+/**
+ * Returns employee statistics like average age and workload.
+ * @param {Array} employees
+ * @returns {Object} - Stats like average age, workload, etc.
+ */
+export function getEmployeeStatistics(employees) {
   const today = new Date();
 
-  employees.forEach(emp => {
+  const totalEmployees = employees.length;
+  const totalAge = employees.reduce((sum, emp) => {
     const birth = new Date(emp.birthdate);
-    const age = today.getFullYear() - birth.getFullYear() - (today < new Date(today.getFullYear(), birth.getMonth(), birth.getDate()) ? 1 : 0);
-    ages.push(age);
-    workloads.push(emp.workload);
-    if (emp.gender === "male") maleWorkloads.push(emp.workload);
-    if (emp.gender === "female") femaleWorkloads.push(emp.workload);
-  });
+    return sum + (today.getFullYear() - birth.getFullYear());
+  }, 0);
 
-  const average = arr => arr.reduce((a, b) => a + b, 0) / arr.length || 0;
-  const median = arr => {
-    const sorted = [...arr].sort((a, b) => a - b);
-    const mid = Math.floor(sorted.length / 2);
-    return sorted.length % 2 === 0
-      ? (sorted[mid - 1] + sorted[mid]) / 2
-      : sorted[mid];
-  };
+  const totalWorkload = employees.reduce((sum, emp) => sum + emp.workload, 0);
+
+  const women = employees.filter(e => e.gender === "female");
+  const avgWomenWorkload = women.length === 0
+    ? 0
+    : women.reduce((sum, e) => sum + e.workload, 0) / women.length;
 
   return {
-    averageAge: Math.round(average(ages) * 10) / 10,
-    averageWorkload: Math.round(average(workloads) * 10) / 10,
-    averageMenWorkload: Math.round(average(maleWorkloads) * 10) / 10,
-    averageWomenWorkload: Math.round(average(femaleWorkloads) * 10) / 10,
-    medianWorkload: Math.round(median(workloads) * 10) / 10
+    averageAge: parseFloat((totalAge / totalEmployees).toFixed(1)),
+    averageWorkload: parseFloat((totalWorkload / totalEmployees).toFixed(1)),
+    averageWomenWorkload: parseFloat(avgWomenWorkload.toFixed(1)),
+    employeeCount: totalEmployees
   };
 }
 
-// ✅ Export functions required by tests
-export { main, generateEmployeeData, getEmployeeStatistics };
+/**
+ * Main function as required by the assignment spec.
+ * @param {object} dtoIn - { count: number, age: { min: number, max: number } }
+ * @returns {Array} Generated employee data
+ */
+export function main(dtoIn) {
+  const firstNames = ["Kai", "Eliana", "Jaden", "Ezra", "Luca", "Rowan", "Nova", "Amara", "Aaliyah", "Finn", "John", "Patrick", "Laura", "Teresa", "Aaron", "Ivan", "Janus", "Orpheus", "Penelope", "Clementine", "Kim", "Andrew", "Patricia", "Urum", "Ryan", "Hugh", "Bob", "Thomas", "Charlie"];
+  const lastNames = ["Sýkora", "Novák", "Svoboda", "Kučera", "Dvořák", "Černý", "Bennett", "Růžička", "Pavlík", "Tichý", "Musil", "Pokorný", "Zeman", "Klein", "Eliáš", "Bílek", "Havel", "Kaplan", "Heřman", "Jakubec", "Fiala", "Švec", "Průša", "Benda", "Moravec", "Březina", "Turek", "Baláž", "Musil"];
+
+  return generateEmployeeData(dtoIn.count, dtoIn.age.min, dtoIn.age.max, firstNames, lastNames);
+}
