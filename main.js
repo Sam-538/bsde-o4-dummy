@@ -69,25 +69,28 @@ export function getEmployeeStatistics(employees) {
   let femaleCount = 0;
 
   for (const emp of employees) {
-    // Age
     const age = (today - new Date(emp.birthdate)) / (1000 * 60 * 60 * 24 * 365.25);
     ageList.push(age);
     totalAge += age;
     if (age < minAge) minAge = age;
     if (age > maxAge) maxAge = age;
 
-    // Workload
     workloadsCount[emp.workload]++;
     workloadsList.push(emp.workload);
 
-    // Female workload
     if (emp.gender === "female") {
       femaleWorkloadSum += emp.workload;
       femaleCount++;
     }
   }
 
-  // Median workload as per professor spec
+  const averageAge = +(totalAge / employees.length).toFixed(1);
+  const medianAge = Math.round(median(ageList));
+  const averageWomenWorkload = femaleCount > 0
+    ? +(femaleWorkloadSum / femaleCount).toFixed(1)
+    : 0;
+
+  // Professor-specified medianWorkload logic
   const middleIndex = Math.floor(employees.length / 2);
   let cumulative = 0;
   let medianWorkload = 0;
@@ -103,12 +106,6 @@ export function getEmployeeStatistics(employees) {
     }
   }
 
-  const averageAge = +(totalAge / employees.length).toFixed(1);
-  const medianAge = Math.round(median(ageList));
-  const averageWomenWorkload = femaleCount > 0
-    ? +(femaleWorkloadSum / femaleCount).toFixed(1)
-    : 0;
-
   return {
     total: employees.length,
     workload10: workloadsCount[10],
@@ -116,8 +113,8 @@ export function getEmployeeStatistics(employees) {
     workload30: workloadsCount[30],
     workload40: workloadsCount[40],
     averageAge,
-    minAge: Math.round(minAge),
-    maxAge: Math.round(maxAge),
+    minAge: Math.floor(minAge),  // ✅ Truncate instead of round
+    maxAge: Math.floor(maxAge),  // ✅ Truncate instead of round
     medianAge,
     medianWorkload,
     averageWomenWorkload,
