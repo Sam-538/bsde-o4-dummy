@@ -117,7 +117,7 @@ function getEmployeeStatistics(employees) {
 }
 
 export {
-  main,
+  main.js,
   generateEmployeeData,
   getEmployeeStatistics
 };
